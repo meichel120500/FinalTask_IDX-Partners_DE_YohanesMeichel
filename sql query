@@ -1,0 +1,67 @@
+CREATE DATABASE DWH_Project
+
+
+CREATE TABLE DimCustomer(
+			CustomerID integer Not Null,
+			FirstName varchar(50) Not Null,
+			LastName varchar(50) Not null,
+			Age integer Not Null,
+			Gender varchar(50) Not Null,
+			City varchar(50) Not Null,
+			NoHP varchar(50) Not Null,
+			Constraint PK_DimCustomer Primary Key (CustomerID)
+			)
+
+CREATE TABLE DimProduct(
+			ProductID integer Not Null,
+			ProductName varchar(255) Not Null,
+			ProductCategory varchar(255) Not null,
+			ProductUnitPrice integer null,
+			Constraint PK_DimProduct Primary Key (ProductID)
+			)
+
+CREATE TABLE DimStatusOrder(
+			StatusID integer Not Null,
+			StatusOrder varchar(50) Not Null,
+			StatusOrderDesc varchar(50) Not null,
+			Constraint PK_StatusOrder Primary Key (StatusID)
+			)
+
+
+
+CREATE TABLE FactSalesOrder(
+			OrderID integer Not Null,
+			CustomerID integer Not Null,
+			ProductID integer Not null,
+			Quantity integer Not Null,
+			Amount integer Not Null,
+			StatusID integer Not Null,
+			OrderDate date Not Null,
+			Constraint PK_DimFactSalesOrder Primary Key (OrderID),
+			)
+
+select * From FactSalesOrder
+
+
+select * From DimCustomer
+
+select * from FactSalesOrder
+
+CREATE OR ALTER PROCEDURE summary_order_status
+(@StatusID INT)
+AS
+BEGIN
+SELECT 
+a.OrderID,
+a.Quantity, 
+b.CustomerName,
+c.ProductName,
+d.StatusOrder
+FROM FactSalesOrder a
+INNER JOIN DimCustomer b ON a.CustomerID = b.CustomerID
+INNER JOIN DimProduct c ON a.ProductID = c.ProductID
+INNER JOIN DimStatusOrder d ON a.StatusID = d.StatusID
+WHERE (a.StatusID)=@StatusID
+END
+
+EXEC summary_order_status @StatusID = 
